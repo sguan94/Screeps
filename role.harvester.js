@@ -11,23 +11,26 @@ function getStorageTargetID(creep){
         return null;
     }else{
         // 优先填充 extension
-        for(var i in targets){
-            if(targets[i].structureType == STRUCTURE_EXTENSION){
-                return targets[i].id;
+        let extension = creep.pos.findClosestByPath(targets, {
+            filter: function(structure){
+                return structure.structureType == STRUCTURE_EXTENSION;
             }
-        }
+        });
+        if(extension != null) return extension.id;
         // 其次填充 spawn
-        for(var i in targets){
-            if(targets[i].structureType == STRUCTURE_SPAWN){
-                return targets[i].id;
+        let spawn = creep.pos.findClosestByPath(targets, {
+            filter: function(structure){
+                return structure.structureType == STRUCTURE_EXTENSION;
             }
-        }
+        });
+        if(spawn != null) return spawn.id;
         // 最后填充 tower
-        for(var i in targets){
-            if(targets[i].structureType == STRUCTURE_TOWER){
-                return targets[i].id;
+        let tower = creep.pos.findClosestByPath(targets, {
+            filter: function(structure){
+                return structure.structureType == STRUCTURE_EXTENSION;
             }
-        }
+        });
+        if(tower != null) return tower.id;
         // 剩余存储点优先级由路径距离决定
         return creep.pos.findClosestByPath(targets).id;
     }
@@ -114,10 +117,10 @@ var roleHarvester = {
                         case ERR_NOT_ENOUGH_RESOURCES:
                             break;
                         case ERR_INVALID_TARGET:
-                            creep.memory.storageTargetID = getStorageTargetID(creep);
+                            creep.memory.storageTargetID = null;
                             break;
                         case ERR_FULL:
-                            creep.memory.storageTargetID = getStorageTargetID(creep);
+                            creep.memory.storageTargetID = null;
                             break;
                     }
                 }
